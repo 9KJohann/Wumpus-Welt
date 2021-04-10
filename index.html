@@ -5,10 +5,486 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Wumpus Welt</title>
+	<style>
+		h1 {
+			text-align: center;
+		}
+		.game {
+			margin: 1rem auto;
+			display: grid;
+			grid-template: repeat(4, 1fr) / repeat(4, 1fr);
+			border: 3px solid black;
+			background-color: #f4dfd7;
+			max-width: 800px;
+			max-height: 100vh;
+		}
+		.game > div {
+			border: 1px solid black;
+			display: grid;
+			place-content: center;
+			padding: 1rem;
+			min-width: 25%;
+			max-width: 200px;
+			
+		}
+
+		.game img {
+			display: block;
+			margin: 1rem auto;
+			max-height: 75px;
+			width: auto;
+			max-width: 125px;
+		}
+
+		#player {
+			max-width: 75px;
+			max-height: 100px;
+		}
+
+		.start {
+			text-align: center;
+		}
+
+		.player {
+
+		}
+
+		.pit {
+
+		}
+
+		.wumpus {
+
+		}
+	</style>
 </head>
 <body>
 	<main>
 		<h1>Wumpus Welt!</h1>
+		<div class="game">
+			<div id="field-0">
+				<img src="images/stench.png" alt="stench">
+			</div>
+			<div id="field-1">
+			
+			</div>
+			<div id="field-2">
+				<img src="images/breeze.png" alt="breeze">
+			</div>
+			<div id="field-3">
+				<img src="images/pit.png" alt="pit" class="pit">
+			</div>
+			<div id="field-4">
+				<img src="images/wumpus.png" alt="wumpus" class="wumpus">
+			</div>
+			<div id="field-5">
+				<div>
+					<img src="images/breeze.png" alt="breeze">
+					<img src="images/stench.png" alt="stench">
+					<img src="images/gold.png" alt="gold">
+				</div>
+			</div>
+			<div id="field-6">
+				<img src="images/pit.png" alt="pit" class="pit">
+			</div>
+			<div id="field-7">
+				<img src="images/breeze.png" alt="breeze">
+			</div>
+			<div id="field-8">
+				<img src="images/stench.png" alt="stench">
+			</div>
+			<div id="field-9">
+			
+			</div>
+			<div id="field-10">
+				<img src="images/breeze.png" alt="breeze">
+			</div>
+			<div id="field-11">
+			
+			</div>
+			<div id="field-12">
+				<img src="images/player.png" alt="player" id="player" class="player">
+				<img src="images/start.png" alt="player" id="START">
+			</div>
+			<div id="field-13">
+				<img src="images/breeze.png" alt="breeze">
+			</div>
+			<div id="field-14">
+				<img src="images/pit.png" alt="pit" class="pit">
+			</div>
+			<div id="field-15">
+				<img src="images/breeze.png" alt="breeze">
+			</div>
+		</div>
+		<button onclick="onTurnLeftClick()">turn left</button>
+		<button onclick="onTurnRightClick()">turn right</button>
+		<button onclick="onMoveClick()">move</button>
+		<button onclick="onPickUpGold()">pickup gold</button>
+		<button onclick="onShootClick()">shoot</button>
+		<button onclick="onClimbClick()">climb</button>
 	</main>
+
+	<script>
+		
+
+
+		let game;
+
+		class Player {
+			
+			constructor() {
+				this.direction = 0;
+				this.arrows = 1;
+			}
+
+			turnLeft() {
+				this.direction = this.direction === 0 ? 270 : this.direction - 90;
+			}
+
+			turnRight() {
+				this.direction = this.direction === 270 ? 0 : this.direction + 90;
+			}
+
+			shoot() {
+				if (this.arrows < 1) return false;
+				this.arrows--;
+				return true;
+			}
+		}
+		
+		class Game {
+			constructor() {
+
+			}
+			/*
+			pickUpGold: () => {},
+			shoot: () => {},
+			climb: () => {},
+			move: () => {},
+			turnRight: () => {},
+			turnLeft: () => {},
+			*/
+
+			climb() {
+				// check player position
+			}
+
+			pickUpGold() {
+				// check if gold is on field
+			}
+
+			shoot() {
+				// check if player has arrows and shoot
+				// check if wumpus on next field
+			}
+
+			turnLeft() {
+
+			}
+
+			getPlayer() {
+				return {
+
+				}
+			}
+		}
+
+		const random = (min, max) => Math.round(Math.random() * (max - min)) + min;
+
+		const createGame = () => {
+			const size = 4;
+			const fields = [];
+			for(let y = 4; y >= 1; y--) {
+				for(let x = 1; x <= 4; x++) {
+					fields.push(
+						{
+							x, 
+							y,
+							stench: false,
+							glitter: false,
+							pit: false,
+							wumpus: false, 
+							breeze: false, 
+							player: false,
+							start: false,
+						}
+					)
+				}
+			}
+
+			const getFieldAt = (x, y) => {
+				if (x < 1 || x > size || y < 1 || y > size) return undefined;
+				return fields[(x - 1) + (size - y) * size];
+			}
+			
+			const getField = getFieldAt
+
+			// place player
+			getField(1,1).player = true;
+			getField(1,1).start = true;
+
+			// place random wumpus
+			getField(random(2,4), random(2,4)).wumpus = true;
+
+			// place random gold
+			getField(random(2,4), random(2,4)).glitter = true;
+
+			fields.forEach(field => {
+				if(field.wumpus || field.player || field.glitter) return;
+				field.pit = random(1,5) === 1;
+			})
+
+			
+			fields.forEach((field, index) => {
+				if(field.wumpus || field.pit) return;
+
+				const above = getField(field.x, field.y + 1);
+				const below = getField(field.x, field.y - 1);
+				const right = getField(field.x + 1, field.y);
+				const left = getField(field.x - 1, field.y);
+
+				if (above?.wumpus || below?.wumpus || right?.wumpus || left?.wumpus)
+					field.stench = true;
+
+				if (above?.pit || below?.pit || right?.pit || left?.pit)
+					field.breeze = true;
+			})
+
+
+			
+			
+
+
+			/*const size = 4;
+			const gameContainer = document.querySelector('.game');
+			const fields = Array(size * size).fill().map((_, i) => {
+				const div = document.createElement('div');
+				gameContainer.appendChild(div);
+				return {
+					div,
+				}
+			});
+			const getField = (x, y) => fields[(x - 1) + (size - y) * size];
+
+			const player = {
+				direction: 0, 
+				image: document.createElement('img'), 
+				update: () => {
+					player.image.style.rotate = `${player.direction}deg`;
+				}
+			};
+
+
+			player.image.src = playerImage;
+			player.image.alt = 'player';
+			player.image.id = 'player'
+
+			getField(1, 1).div.appendChild(player.image)
+
+			const span = document.createElement('span');
+			span.appendChild(document.createTextNode('Start'))
+			span.className = 'start'
+			getField(1,1).div.appendChild(span)
+			// player start postion
+			// random wumpus 
+			// random 3 pits
+			// random gold
+
+			class Field {
+
+			}
+			
+			const sensor = {
+				isStench: () => true,
+				isBreeze: () => true,
+				isGlitter: () => true,
+				canMove: () => true,
+				// listener for sterben von wumpus
+			}
+
+			return {
+				getField, 
+				sensors,
+			}*/
+
+			return {
+				fields
+			}
+		}
+	
+		window.onload = () => {
+			const assets = createGameAssets();
+			const size = 4;
+			const gameContainer = document.querySelector('.game');
+			
+			const {fields} = createGame();
+			console.log(fields);
+			//drawGame(fields);
+		};
+
+		const assets = createGameAssets();
+
+
+		function createGameAssets() {
+			const player = document.createElement('img');
+			player.src = '/images/player.png';
+			player.alt = 'player';
+
+
+			const wumpus = document.createElement('img');
+			wumpus.src = '/images/wumpus.png';
+			wumpus.alt = 'wumpus';
+
+			const stench = document.createElement('img');
+			stench.src = '/images/stench.png';
+			stench.alt = 'stench';
+
+			const breeze = document.createElement('img');
+			breeze.src = '/images/breeze.png';
+			breeze.alt = 'breeze';
+
+			const pit = document.createElement('img');
+			pit.src = '/images/pit.png';
+			pit.alt = 'pit';
+
+			const gold = document.createElement('img');
+			gold.src = '/images/gold.png';
+			gold.alt = 'gold';
+
+			return {
+				player, 
+				wumpus, 
+				stench, 
+				breeze, 
+				pit, 
+				gold
+			}
+		}
+
+		function drawGame(fields) {
+			const gameContainer = document.querySelector('.game');
+			fields.forEach(field => {
+				const div = document.createElement('div');
+				gameContainer.appendChild(div);
+
+				if (field.player) {
+					const player = document.createElement('img');
+					player.src = '/images/player.png';
+					player.alt = 'player';
+					player.id = 'player'
+					div.appendChild(player);
+				}
+
+				if (field.wumpus) {
+					const wumpus = document.createElement('img');
+					wumpus.src = '/images/wumpus.png';
+					wumpus.alt = 'wumpus';
+					div.appendChild(wumpus);
+				}
+
+				if (field.breeze) {
+					const breeze = document.createElement('img');
+					breeze.src = '/images/breeze.png';
+					breeze.alt = 'breeze';
+					div.appendChild(breeze);
+				}
+
+
+				if (field.stench) {
+					const stench = document.createElement('img');
+					stench.src = '/images/stench.png';
+					stench.alt = 'stench';
+					div.appendChild(stench);
+				}
+
+
+
+				if (field.pit) {
+					const pit = document.createElement('img');
+					pit.src = '/images/pit.png';
+					pit.alt = 'pit';
+					div.appendChild(pit);
+				}
+
+				if (field.glitter) {
+					const gold = document.createElement('img');
+					gold.src = '/images/gold.png';
+					gold.alt = 'gold';
+					div.appendChild(gold);
+				}
+
+				if (field.start) {
+					const span = document.createElement('span');
+					span.className="start"
+					span.appendChild(document.createTextNode('Start'))
+					div.appendChild(span);
+				}
+			})
+		}
+
+		function onTurnLeftClick() {
+			player.direction = player.direction === 0 ? 270 : player.direction - 90;
+			player.update();
+		}
+
+		function onTurnRightClick() {
+			player.direction = player.direction === 270 ? 0 : player.direction + 90;
+			player.update()
+		}
+
+		function onMoveClick() {
+			let d;
+			switch (player.direction) {
+				case 0: 
+					d = { x: 1, y: 0}
+					break;
+				case 90:
+					d = { x: 0, y: -1}
+					break;
+				case 180:
+					d = { x: -1, y: 0}
+					break;
+				case 270:
+					d = { x: 0, y: 1}
+					break;
+			}
+			console.log(`player is moving ${JSON.stringify(d)}`);
+		}
+
+		function onPickUpGold() {
+
+		}
+
+		function onShootClick() {
+
+		}
+
+		function onClimbClick() {
+
+		}
+
+
+
+		const actions = {
+			pickUpGold: () => {},
+			shoot: () => {},
+			climb: () => {},
+			move: () => {},
+			turnRight: () => {},
+			turnLeft: () => {},
+		}
+
+		const sensor = {
+			isStench: () => true,
+			isBreeze: () => true,
+			isGlitter: () => true,
+			canMove: () => true,
+			// listener for sterben von wumpus
+		}
+
+		const world = {
+
+		}
+	</script>
 </body>
 </html>
